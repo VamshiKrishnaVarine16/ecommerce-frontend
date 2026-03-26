@@ -1,11 +1,28 @@
 const API_BASE_URL = 'http://localhost:8080/api';
 
-// Load all products when page loads
 document.addEventListener('DOMContentLoaded', () => {
+    updateNavbar();
     loadProducts();
 });
 
-// Fetch all products from backend
+function updateNavbar() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    const authLinks = document.getElementById('authLinks');
+
+    if (token) {
+        authLinks.innerHTML = `
+            <span style="color:white; margin-left:20px;">Hi, ${username}!</span>
+            <a href="#" onclick="logout()" style="margin-left:20px;">Logout</a>
+        `;
+    } else {
+        authLinks.innerHTML = `
+            <a href="login.html" style="margin-left:20px;">Login</a>
+            <a href="register.html" style="margin-left:20px;">Register</a>
+        `;
+    }
+}
+
 async function loadProducts() {
     try {
         const response = await fetch(`${API_BASE_URL}/products`);
@@ -18,7 +35,6 @@ async function loadProducts() {
     }
 }
 
-// Display products in the grid
 function displayProducts(products) {
     const grid = document.getElementById('productsGrid');
     
@@ -44,7 +60,6 @@ function displayProducts(products) {
     `).join('');
 }
 
-// Search products by name
 async function searchProducts() {
     const query = document.getElementById('searchInput').value.trim();
     
@@ -62,11 +77,11 @@ async function searchProducts() {
     }
 }
 
-// Add to cart (will implement fully in Session 9)
 function addToCart(productId) {
     const token = localStorage.getItem('token');
     if (!token) {
         alert('Please login to add items to cart!');
+        window.location.href = 'login.html';
         return;
     }
     alert(`Product ${productId} added to cart!`);
